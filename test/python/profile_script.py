@@ -116,16 +116,17 @@ def writer(data_dict, path="test/data/"):
 shape_list = [256, 512] + \
              [x * 1024 for x in range(1, 15)]
 
+
 profile_type_list = [
     samples.Int4MatmulInt32Out,
-    samples.Int4SpMatmulInt32Out,
+    # samples.Int4SpMatmulInt32Out,
     samples.Int8MatmulInt32Out,
-    samples.Int8SpMatmulInt32Out,
+    # samples.Int8SpMatmulInt32Out,
+    samples.Int4FusionFp16Out,
+    samples.Int8FusionFp16Out,
     samples.FP16Matmul,
     samples.FP32Matmul,
     # samples.Int8SpmmCuspLtFp16Out,
-    samples.Int4FusionFp16Out,
-    samples.Int8FusionFp16Out,
 ]
 
 dont_need_quant_and_dequant = [
@@ -151,10 +152,10 @@ written_data_dict = {
 written_data_label = list(written_data_dict.keys())
 
 if __name__ == "__main__":
-    repetitions = 300
+    repetitions = 100
     preheats = 10
     profiler(shape_list, profile_type_list,
              dont_need_quant_and_dequant,
              dont_need_dequant, repetitions=repetitions, preheats=preheats)
 
-    # writer(written_data_dict, path=written_data_directory)
+    writer(written_data_dict, path=written_data_directory)

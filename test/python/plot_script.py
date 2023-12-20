@@ -79,7 +79,7 @@ def pie_chart(shape_list, profile_type_list, plot_target_dict,
     typeidx = find_type_index(profile_type_list, plot_type_dict[1])
     assert typeidx != -1
     colors = ('#ff9999', '#66b3ff', '#99ff99')
-    explode = (0.4, 0.0, 0.1)
+    explode = (0.05, 0.05, 0.05)
 
     def pie_chart_axis(ax, proportion, title):
         ax.pie(proportion, explode=explode, autopct='%1.1f%%',
@@ -145,12 +145,14 @@ if __name__ == "__main__":
 
     line_chart_type_dict = {
         "W4A4": samples.Int4MatmulInt32Out,
-        "W4A4-4:8": samples.Int4SpMatmulInt32Out,
+        # "W4A4-4:8": samples.Int4SpMatmulInt32Out,
         "W8A8": samples.Int8MatmulInt32Out,
         # "W8A8-2:4-cutlass": samples.Int8SpMatmulInt32Out,
         # "FP16": samples.FP16Matmul,
         # "FP32": samples.FP32Matmul,
-        "W8A8-2:4": samples.Int8SpmmCuspLtFp16Out,
+        # "W8A8-2:4": samples.Int8SpmmCuspLtFp16Out,
+        "W4A4-fusion": samples.Int4FusionFp16Out,
+        "W8A8-fusion": samples.Int8FusionFp16Out,
     }
 
     ylabel = "Time"
@@ -181,13 +183,15 @@ if __name__ == "__main__":
     ]
 
     line_chart_type_dict = {
-        "W4A4-4:8": samples.Int4SpMatmulInt32Out,
+        # "W4A4-4:8": samples.Int4SpMatmulInt32Out,
         "W4A4": samples.Int4MatmulInt32Out,
-        "W8A8-2:4": samples.Int8SpmmCuspLtFp16Out,
+        # "W8A8-2:4": samples.Int8SpmmCuspLtFp16Out,
         "W8A8": samples.Int8MatmulInt32Out,
         # "W8A8-2:4-cutlass": samples.Int8SpMatmulInt32Out,
         "FP16": samples.FP16Matmul,
         "FP32": samples.FP32Matmul,
+        # "W4A4-fusion": samples.Int4FusionFp16Out,
+        # "W8A8-fusion": samples.Int8FusionFp16Out,
     }
 
     file_label = "performance"
@@ -195,7 +199,7 @@ if __name__ == "__main__":
     plot_logy = False
     show_type_label = True
     show_target_label = False
-    suptitle = "Matmul Performance Comparison on RTX3090"
+    suptitle = "Matmul Performance Comparison on RTX3080"
 
     assert (all(item in written_data_label for item in line_chart_target_label))
 
@@ -216,13 +220,15 @@ if __name__ == "__main__":
     }
 
     pie_chart_type_dict = {
-        "W4A4-4:8": samples.Int4SpMatmulInt32Out,
+        # "W4A4-4:8": samples.Int4SpMatmulInt32Out,
         "W4A4": samples.Int4MatmulInt32Out,
-        "W8A8-2:4": samples.Int8SpmmCuspLtFp16Out,
+        # "W8A8-2:4": samples.Int8SpmmCuspLtFp16Out,
         "W8A8": samples.Int8MatmulInt32Out,
         # "W8A8-2:4-cutlass": samples.Int8SpMatmulInt32Out,
         # "FP16": samples.FP16Matmul,
         # "FP32": samples.FP32Matmul,
+        "W4A4-fusion": samples.Int4FusionFp16Out,
+        "W8A8-fusion": samples.Int8FusionFp16Out,
     }
 
     subplot_row = 2
@@ -239,44 +245,3 @@ if __name__ == "__main__":
     for type in pie_chart_type_dict.items():
         pie_chart(shape_list, profile_type_list, pie_chart_target,
                   type, subplot_row, subplot_col)
-
-    # ---------------------------
-
-    line_chart_target_label = [
-        "total",
-        # "matmul", 
-        # "quantization", 
-        "dequantization",
-        # "performance",
-    ]
-
-    line_chart_type_dict = {
-        # "W4A4-4:8": samples.Int4SpMatmulInt32Out,
-        # "W4A4": samples.Int4MatmulInt32Out,
-        # "W8A8-2:4": samples.Int8SpmmCuspLtFp16Out,
-        "W8A8": samples.Int8MatmulInt32Out,
-        # "W8A8-2:4-cutlass": samples.Int8SpMatmulInt32Out,
-        # "FP16": samples.FP16Matmul,
-        # "FP32": samples.FP32Matmul,
-        # "W4A4-fusion": samples.Int4FusionFp16Out,
-        "W8A8-fusion": samples.Int8FusionFp16Out,
-    }
-
-    file_label = "performance"
-    ylabel = "TFLOPS"
-    plot_logy = True
-    show_type_label = True
-    show_target_label = True
-    suptitle = "Matmul Performance Comparison on RTX3050"
-
-    assert (all(item in written_data_label for item in line_chart_target_label))
-
-    line_chart_target = {label: fetched_data_dict[label] for label in line_chart_target_label}
-
-    assert (all(item in profile_type_list for item in line_chart_type_dict.values()))
-
-    line_chart(shape_list, profile_type_list, line_chart_target,
-               line_chart_type_dict, ylabel, suptitle,
-               file_label, plot_logy, show_type_label, show_target_label)
-
-    # #---------------------------
